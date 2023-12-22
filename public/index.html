@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Scheduler</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            text-align: center;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #3498db;
+        }
+        label {
+            color: #333;
+        }
+        input {
+            margin-bottom: 10px;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #3498db;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #217dbb;
+        }
+        #schedule {
+            display: none;
+            margin-top: 20px;
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        p {
+            color: #333;
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Team Scheduler</h1>
+        <label for="totalTeams">Enter the total number of teams (even):</label>
+        <input type="number" id="totalTeams" min="2" required>
+        <button onclick="createForm()">Generate Form</button><br/>
+<br/>
+        <div id="form"></div>
+
+        <button id="generateButton" onclick="generateSchedule()" style="display:none;">Generate Schedule</button>
+        
+        <div id="schedule"></div>
+    </div>
+
+    <script>
+        function createForm() {
+            const totalTeamsInput = document.getElementById('totalTeams');
+            const totalTeams = totalTeamsInput.value;
+            console.log(totalTeams,"to")
+            if (totalTeams>1 &&  totalTeams % 2 === 0) {
+                const formContainer = document.getElementById('form');
+                formContainer.innerHTML = '';
+
+                for (let i = 1; i <= totalTeams; i++) {
+                    const teamNameInput = document.createElement('input');
+                    teamNameInput.type = 'text';
+                    teamNameInput.placeholder = `Team ${i} Name`;
+                    teamNameInput.name = `team${i}`;
+                    teamNameInput.required = true;
+
+                    const guildNameInput = document.createElement('input');
+                    guildNameInput.type = 'text';
+                    guildNameInput.placeholder = `Guild ${i} Name`;
+                    guildNameInput.name = `guild${i}`;
+                    guildNameInput.required = true;
+
+                    formContainer.appendChild(teamNameInput);
+                    formContainer.appendChild(guildNameInput);
+                    formContainer.appendChild(document.createElement('br'));
+                }
+
+                // Show the "Generate Schedule" button
+                const generateButton = document.getElementById('generateButton');
+                generateButton.style.display = 'inline';
+            } else {
+                alert("Please enter an even number of teams.");
+            }
+        }
+
+     function generateSchedule() {
+    const totalTeams = document.getElementById('totalTeams').value;
+    const formContainer = document.getElementById('form');
+    const scheduleContainer = document.getElementById('schedule');
+    scheduleContainer.innerHTML = '';
+
+    const teams = [];
+    for (let i = 1; i <= totalTeams; i++) {
+        const teamName = document.getElementsByName(`team${i}`)[0].value;
+        const guildName = document.getElementsByName(`guild${i}`)[0].value;
+        if (teamName) {
+            teams.push({ teamName, guildName });
+        } else {
+            alert("TEAM NAME CAN'T BE EMPTY!!");
+            return;
+        }
+    }
+
+    const schedule = [];
+    while (teams.length > 1) {
+        const team1 = teams.pop();
+        const team2Index = Math.floor(Math.random() * teams.length);
+        const team2 = teams[team2Index];
+        teams.splice(team2Index, 1);
+
+        schedule.push(`${team1.teamName} (${team1.guildName}) vs ${team2.teamName} (${team2.guildName})`);
+    }
+
+    scheduleContainer.innerHTML = `<h2>Generated Schedule</h2>`;
+    schedule.forEach(match => {
+        scheduleContainer.innerHTML += `<p>${match}</p>`;
+    });
+
+    scheduleContainer.style.display = 'block';
+}
+
+   </script>
+</body>
+</html>
